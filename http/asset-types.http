@@ -1,0 +1,31 @@
+GET http://localhost:3000/asset-types
+
+###
+
+POST http://localhost:3000/asset-types
+Content-Type: application/json
+
+{
+    "id": "z",
+    "label": "Zee device"
+}
+
+
+###
+
+PUT  http://localhost:3000/asset-types
+Content-Type: application/json
+
+{
+    "id": "z",
+    "label": "fuubar"
+}
+
+###
+
+POST http://localhost:3000/asset-types/z
+Content-Type: application/json
+
+{
+    "label": "fuubar"
+}
