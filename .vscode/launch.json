@@ -23,7 +23,7 @@
             "skipFiles": [
                 "<node_internals>/**"
             ],
-            "program": "dist/index.js",
+            "program": "dist/${fileBasenameNoExtension}.js",
             "outFiles": [
                 "${workspaceFolder}/**/*.js"
             ]
