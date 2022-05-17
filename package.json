@@ -7,7 +7,7 @@
     "build": "npx tsc",
     "watch:build": "npx tsc --watch",
     "watch:start": "npx nodemon dist/index.js",
-    "start:dev": "nodemon src/index.ts",
+    "dev": "nodemon src/index.ts",
     "start": "node dist/index.js",
     "test": "jest"
   },
