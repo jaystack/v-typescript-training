@@ -17,16 +17,12 @@
             ]
         },
         {
-            "name": "Debug Application",
-            "type": "pwa-node",
+            "type": "node",
             "request": "launch",
-            "skipFiles": [
-                "<node_internals>/**"
-            ],
-            "program": "dist/${fileBasenameNoExtension}.js",
-            "outFiles": [
-                "${workspaceFolder}/**/*.js"
-            ]
-        }
+            "name": "Debug Application",
+            "program": "${workspaceFolder}/${relativeFileDirname}/${fileBasename}",
+            "preLaunchTask": "tsc: build - tsconfig.json",
+            "outFiles": ["${workspaceFolder}/dist/**/*.js"]
+          }
     ]
 }
