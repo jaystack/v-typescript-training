@@ -1,0 +1,29 @@
+###
+GET http://localhost:3000/assets
+
+###
+
+POST http://localhost:3000/assets
+Content-Type: application/json
+
+{
+    "name": "Big Fat PC",
+    "assetTypeId": "pc",
+    "personId": "z"
+}
+
+
+###
+POST http://localhost:3000/assets/asset1
+Content-Type: application/json
+
+{
+    "name": "Big Fat PC",
+    "assetTypeId": "pc",
+    "personId": "z"
+}
+
+###
+
+DELETE http://localhost:3000/assets/asset1
+
