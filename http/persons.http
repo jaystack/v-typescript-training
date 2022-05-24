@@ -1,0 +1,30 @@
+###
+GET http://localhost:3000/persons
+
+###
+
+POST http://localhost:3000/persons
+Content-Type: application/json
+
+{
+    "id": "h",
+    "firstName": "Hajni",
+    "lastName": "Battancs",
+    "country": "UK"
+}
+
+
+###
+POST http://localhost:3000/persons/h
+Content-Type: application/json
+
+{
+    "firstName": "Hajni",
+    "lastName": "Battancs Mrs Zee",
+    "country": "UK"
+}
+
+###
+
+DELETE http://localhost:3000/persons/h
+

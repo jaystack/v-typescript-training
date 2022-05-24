@@ -1,75 +1,239 @@
 import express from 'express';
 
 const app  = express();
-const port = 3000;
+app.use(express.json());
 
-type AssetType = {
+
+type EntityBase = {
     id: string;
+}
+
+class Repository<T extends EntityBase> {
+    public store: Map<string, T>
+
+    constructor(items: T[]) {
+        this.store = new Map(items.map(item => [item.id, item]))
+    }
+
+    allItems = async () => [...this.store.values()]
+
+    hasKey = async (key: string) => this.store.has(key)
+
+    set =  async (key: string, item: T) => this.store.set(key, item)
+
+    // returns true if key existed
+    delete = async (key: string) => this.store.delete(key)
+}
+
+
+/************************************************************* */
+/*              ASSETTYPES                                     */
+/************************************************************* */
+type AssetType = EntityBase & {
     label: string;
 }
 
-let assetTypes: AssetType[] = [
-    { id: 'mac', label: 'Apple Mac' },
-    { id: 'pc', label: 'Windows PC' },
-    { id: 'iphone', label: 'Apple Phone' },
-]
+const assetTypes = new Repository<AssetType>(
+    [
+        { id: 'mac', label: 'Apple Mac' },
+        { id: 'pc', label: 'Windows PC' },
+        { id: 'iphone', label: 'Apple Phone' },
+    ]
+);
 
-app.use(express.json());
 
-app.get('/asset-types', (req, res) => {
-    res.json({
-        ok: true,
-        date: Date.now(),
-        result: assetTypes
-    });
+app.get('/asset-types', async (req, res) => {
+    try {
+        const items = await assetTypes.allItems();
+        res.json({
+            ok: true,
+            date: Date.now(),
+            result: items,
+        });            
+    } catch(error) {
+        return res.status(400).json({
+            ok: false,
+            date: Date.now(),
+            message: error instanceof Error ? error.message : 'Something went wrong'
+        })
+    }
 });
 
 function createAssetType(id: string, label: string): AssetType {
     if (!id) throw new Error('invalid assetId');
     if (!label) throw new Error('invalid assetLabel');
+    
     return {
         id,
         label,
     }
 }
 
-app.post('/asset-types', (req, res) => {
-    const payload: AssetType = req.body;
-    const { id, label } = payload;
-    if (assetTypes.find(assetType => assetType.id === id)) {
-        throw new Error('id is not unique')
-    };
 
-    assetTypes = [...assetTypes, createAssetType(id, label)];
-    res.status(202).send();
-})
+app.post('/asset-types', async (req, res) => {
+    try {
+        const assetType = req.body as AssetType;
+        const { id, label } = assetType;
 
-app.put('/asset-types', (req, res) => {
-    const payload: AssetType = req.body;
-    const { id, label } = payload;
+        if (await assetTypes.hasKey(id)) throw new Error('id is not unique');        
+        await assetTypes.set(id, createAssetType(id, label));
 
-    if (!assetTypes.find(assetType => assetType.id === id)) {
-        throw new Error('id not found')
-    };
-
-    assetTypes = assetTypes.map(assetType =>  assetType.id === id ? createAssetType(id, label) : assetType)
-    return res.status(202).send();
-})
-
-app.post('/asset-types/:id', (req, res) => {
-    const payload: AssetType = req.body;
-    const id = req.params.id;
-    const { label } = payload;
-
-    if (!assetTypes.find(assetType => assetType.id === id)) {
-        throw new Error('id not found')
-    };
-
-    assetTypes = assetTypes.map(assetType => assetType.id === id ? createAssetType(id, label) : assetType)
-    return res.status(202).send();
+        res.json({
+            ok: true,
+            date: Date.now(),
+        });
+    } catch(error) {
+        res.status(400).json({
+            ok: false,
+            date: Date.now(),
+            message: error instanceof Error ? error.message : 'Something went wrong'
+        })
+    }
 })
 
 
-app.listen(port, () => {
-    console.log(`⚡️[server]: Server is running at http://localhost:${port}`);
+app.post('/asset-types/:id', async (req, res) => {
+    try {
+        const payload: AssetType = req.body;
+        const id = req.params.id;
+        const { label } = payload;
+    
+        if (!await assetTypes.hasKey(id)) throw new Error('id not found');
+    
+        await assetTypes.set(id, createAssetType(id, label));
+        res.json({
+            ok: true,
+            date: Date.now(),
+        });
+    } catch(error) {
+        res.status(400).json({
+            ok: false,
+            date: Date.now(),
+            message: error instanceof Error ? error.message : 'Something went wrong'
+        })
+    }
+})
+
+app.delete('/asset-types/:id', async (req, res) => {
+    try {
+        const { params: { id } } = req;
+        const result = await assetTypes.delete(id);
+        res.json({
+            ok: true,
+            date: Date.now(),
+            result,
+        })
+    } catch(error) {
+        res.status(400).json({
+            ok: false,
+            date: Date.now(),
+            message: error instanceof Error ? error.message : 'Something went wrong'
+        })
+    }
+})
+
+/************************************************************* */
+/*              PERSONS                                        */
+/************************************************************* */
+
+type Person = EntityBase & {
+    firstName: string;
+    lastName: string;
+    country: string;
+}
+
+const persons = new Repository<Person>(
+    [
+        { id: 'z', firstName: 'Peter', lastName: 'Zentai', country: 'UK' },
+        { id: 'np', firstName: 'Peter', lastName: 'Nochta', country: 'HU' },
+    ]
+);
+
+app.get('/persons', async (req, res) => {
+    try {
+        const items = await persons.allItems();
+        res.json({ 
+            ok: true,
+            date: Date.now(),
+            result: items
+        })
+    } catch(error) {
+        res.status(400).json({
+            ok: false,
+            date: Date.now(),
+            message: error instanceof Error ? error.message : 'Something went wrong'
+        })
+    }
+});
+
+function createPerson(id: string, firstName: string, lastName: string, country: string): Person {
+    //if ([id, firstName, lastName, country].some(input => input === undefined || input == null)) throw Error('')
+    if ([id, firstName, lastName, country].some(input => !input)) throw Error('All inputs need a value')
+    
+    return {
+        id,
+        firstName,
+        lastName,
+        country,
+    }
+}
+
+
+app.post('/persons', async (req, res) => {
+    try {
+        const person = req.body as Person;
+        const { id, firstName, lastName, country } = person;
+
+        if (await persons.hasKey(id)) throw new Error('id is not unique');
+         
+        await persons.set(id, createPerson(id, firstName, lastName, country))
+        return res.json({
+            ok: true,
+            date: Date.now(),
+        });
+    } catch(error) {
+        return res.status(400).json({
+            ok: false,
+            date: Date.now(),
+            message: error instanceof Error ? error.message : 'Something went wrong'
+        })
+    }
+})
+
+
+app.post('/persons/:id', async (req, res) => {
+    try {
+        const  { params: { id } } = req;
+        if (!await persons.hasKey(id)) throw new Error('id not found');
+    
+        const person = <Person>req.body;
+        const { firstName, lastName, country } = person;
+    
+        await persons.set(id, createPerson(id, firstName, lastName, country))
+        res.json({
+            ok: true,
+            date: Date.now(),
+        })
+    } catch(error) {
+        res.status(400).json({
+            ok: false,
+            date: Date.now(),
+            message: error instanceof Error ? error.message : 'Something went wrong'
+        })
+    }    
+})
+
+app.delete('/persons/:id', async (req, res) => {
+    const { params: { id } } = req;
+    const result = await persons.delete(id);
+    res.json({
+        ok: true,
+        date: Date.now(),
+        result,
+    })
+})
+
+
+const listener = app.listen(3000, () => {
+    console.log(`⚡️[server]: Server is running at http://localhost:`, listener.address());
 });
