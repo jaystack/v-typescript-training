@@ -1,6 +1,8 @@
-import {Model, Column, Table, BelongsToMany, Scopes, PrimaryKey, CreatedAt, UpdatedAt, DataType} from "sequelize-typescript";
+import {Model, Column, Table, BelongsToMany, Scopes, PrimaryKey, CreatedAt, UpdatedAt, DataType, HasMany} from "sequelize-typescript";
+import { Asset } from "./Asset";
 
-@Table
+@Scopes(() => ({defaultScope: {include: [Asset] }}))
+@Table({tableName: 'assetTypes'})
 export class AssetType extends Model<AssetType> {
 
     @PrimaryKey
@@ -9,5 +11,8 @@ export class AssetType extends Model<AssetType> {
   
     @Column(DataType.STRING)
     label!: string;
+
+    @HasMany(() => Asset)
+    assets!: Asset[]
 
   }

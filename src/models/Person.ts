@@ -1,6 +1,6 @@
-import {Model, Column, Table, BelongsToMany, Scopes, PrimaryKey, CreatedAt, UpdatedAt, DataType} from "sequelize-typescript";
+import {Model, Column, Table, BelongsToMany, Scopes, PrimaryKey, CreatedAt, UpdatedAt, DataType, AutoIncrement} from "sequelize-typescript";
 
-@Table
+@Table({tableName: 'persons'})
 export class Person extends Model<Person> {
 
     @PrimaryKey

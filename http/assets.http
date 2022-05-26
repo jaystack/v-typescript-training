@@ -1,0 +1,29 @@
+###
+GET http://localhost:3000/assets
+
+###
+GET http://localhost:3000/assets/1
+
+###
+POST http://localhost:3000/assets
+Content-Type: application/json
+
+{
+    "name": "Zee device",
+    "assetTypeId": "z",
+    "personId": "h"
+}
+
+
+###
+POST http://localhost:3000/assets/1
+Content-Type: application/json
+
+{
+    "name": "foo bar",
+    "assetTypeId": "z",
+    "personId": "h"
+}
+
+###
+DELETE http://localhost:3000/assets/z
