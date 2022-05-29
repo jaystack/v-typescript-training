@@ -23,6 +23,7 @@
   },
   "homepage": "https://github.com/jaystack/v-typescript-training#readme",
   "devDependencies": {
+    "@faker-js/faker": "^7.1.0",
     "@types/express": "^4.17.13",
     "@types/jest": "^27.5.1",
     "jest": "^28.1.0",
