@@ -19,18 +19,14 @@ import {
   updateAssetTypes,
 } from "./assetTypes";
 
-const reqStub = {
-  get: jest.fn(),
-};
-
-const resStub = {
-  status: jest.fn(),
-  json: jest.fn(),
-};
-
 describe("assetType", () => {
-  const req: Partial<Request> = { ...reqStub };
-  const res: Partial<Response> = { ...resStub };
+  const req: Partial<Request> = {
+    get: jest.fn(),
+  };
+  const res: Partial<Response> = {
+    status: jest.fn(),
+    json: jest.fn(),
+  };
 
   beforeEach(() => {
     jest.resetAllMocks();
@@ -41,8 +37,8 @@ describe("assetType", () => {
 
     await getAssetTypes(req as Request, res as Response);
 
-    expect(resStub.json).toBeCalledTimes(1);
-    expect(resStub.json).toBeCalledWith({
+    expect(res.json).toBeCalledTimes(1);
+    expect(res.json).toBeCalledWith({
       ok: true,
       date: expect.any(Number),
       result: [],
@@ -61,8 +57,8 @@ describe("assetType", () => {
 
     await createAssetTypes({ ...req, body } as Request, res as Response);
 
-    expect(resStub.json).toBeCalledTimes(1);
-    expect(resStub.json).toBeCalledWith({
+    expect(res.json).toBeCalledTimes(1);
+    expect(res.json).toBeCalledWith({
       ok: true,
       date: expect.any(Number),
     });
@@ -85,9 +81,9 @@ describe("assetType", () => {
 
     await createAssetTypes({ ...req, body } as Request, res as Response);
 
-    expect(resStub.status).toBeCalledTimes(1);
-    expect(resStub.json).toBeCalledTimes(1);
-    expect(resStub.json).toBeCalledWith({
+    expect(res.status).toBeCalledTimes(1);
+    expect(res.json).toBeCalledTimes(1);
+    expect(res.json).toBeCalledWith({
       ok: false,
       date: expect.any(Number),
       message: "id is not unique",
@@ -118,8 +114,8 @@ describe("assetType", () => {
       res as Response
     );
 
-    expect(resStub.json).toBeCalledTimes(1);
-    expect(resStub.json).toBeCalledWith({
+    expect(res.json).toBeCalledTimes(1);
+    expect(res.json).toBeCalledWith({
       ok: true,
       date: expect.any(Number),
     });
@@ -143,8 +139,8 @@ describe("assetType", () => {
 
     await deleteAssetTypes({ ...req, params } as Request, res as Response);
 
-    expect(resStub.json).toBeCalledTimes(1);
-    expect(resStub.json).toBeCalledWith({
+    expect(res.json).toBeCalledTimes(1);
+    expect(res.json).toBeCalledWith({
       ok: true,
       date: expect.any(Number),
       result: 1,
